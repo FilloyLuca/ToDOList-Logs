@@ -11,6 +11,8 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+// AJOUT TP2 - import du logger SLF4J pour les logs techniques
+import org.slf4j.LoggerFactory
 
 @Controller
 @RequestMapping("/tasks")
@@ -19,14 +21,23 @@ class TaskController(
     private val userService: UserService,
     private val auditLogService: AuditLogService
 ) {
+    // AJOUT TP2 - logger technique pour cette classe
+    private val logger = LoggerFactory.getLogger(TaskController::class.java)
 
     @GetMapping
     fun listTasks(authentication: Authentication, model: Model): String {
         val user = userService.findByUsername(authentication.name)!!
         val tasks = taskService.getUserTasks(user)
+//        model.addAttribute("tasks", tasks)
+//        model.addAttribute("username", user.username)
+//        return "tasks"
+
+        // AJOUT TP2 - log technique lors de l’affichage de la liste des tâches
+        logger.info("Affichage de la liste des tâches pour l'utilisateur {}",
+            user.username)
         model.addAttribute("tasks", tasks)
         model.addAttribute("username", user.username)
-        return "tasks"
+        return "task"
     }
 
     @PostMapping("/create")
@@ -50,6 +61,14 @@ class TaskController(
             action = "CREATE_TASK",
             details = "Création de la tâche : $title",
             request = request
+        )
+
+        // AJOUT TP2 - log technique lors de la création d’une tâche
+        logger.info(
+            "Création d'une tâche pour l'utilisateur {} : titre=\"{}\", échéance={}",
+            user.username,
+            title,
+            parsedDueDate
         )
 
         return "redirect:/tasks"
