@@ -14,13 +14,18 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler
+// AJOUT TP2 - Import du logger SLF4J
+import org.slf4j.LoggerFactory
 
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig (
-    private val auditLogService: AuditLogService
+    private val auditLogService: AuditLogService,
+    private val userDetailsService: UserDetailsService
 ){
+    // AJOUT TP2 - Logger dédié à l’audit (redirigé vers audit.log via logbackspring.xml)
+    private val auditLogger = LoggerFactory.getLogger("AUDIT")
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
@@ -75,24 +80,36 @@ class SecurityConfig (
     private fun customAuthenticationSuccessHandler(): AuthenticationSuccessHandler =
         AuthenticationSuccessHandler { request, response, authentication ->
             val username = authentication.name
+            val ip = request.remoteAddr
+
             auditLogService.log(
                 username = username,
                 action = "LOGIN",
                 details = "Connexion réussie",
                 request = request
             )
+
+            // AJOUT TP2 - écriture dans audit.log
+            auditLogger.info("LOGIN user={} ip={}", username, ip)
+
             response.sendRedirect("/tasks")
         }
 
     private fun customLogoutSuccessHandler(): LogoutSuccessHandler =
         LogoutSuccessHandler { request, response, authentication ->
             val username = authentication?.name ?: "anonymous"
+            val ip = request.remoteAddr
+
             auditLogService.log(
                 username = username,
                 action = "LOGOUT",
                 details = "Déconnexion",
                 request = request
             )
+
+            // AJOUT TP2 - écriture dans audit.log
+            auditLogger.info("LOGOUT user={} ip={}", username, ip)
+
             response.sendRedirect("/login?logout")
         }
 }
