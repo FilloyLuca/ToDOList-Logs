@@ -37,11 +37,10 @@
                                     <span th:class="${'badge ' +
                                         (log.action == 'LOGIN' ? 'bg-success' :
                                          log.action == 'LOGOUT' ? 'bg-info' :
-                                         log.action == 'CREATE_TASK' ? 'bg-
-primary' :
-                                         log.action == 'UPDATE_TASK' ? 'bg-
-warning' :
-                                         'bg-danger')}"
+                                         log.action == 'CREATE_TASK' ? 'bg-primary' :
+                                         log.action == 'UPDATE_TASK' ? 'bg-warning' :
+                                         log.action == 'DELETE_TASK' ? 'bg-danger' :
+                                         'bg-secondary')}"
                                           th:text="${log.action}">
                                         Action
                                     </span>
