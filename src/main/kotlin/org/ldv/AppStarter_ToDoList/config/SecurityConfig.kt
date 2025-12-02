@@ -1,5 +1,6 @@
 package org.ldv.AppStarter_ToDoList.config
 
+import org.ldv.AppStarter_ToDoList.service.AuditLogService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -15,7 +16,9 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig (
+    private val auditLogService: AuditLogService
+){
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
