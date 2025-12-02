@@ -87,6 +87,12 @@ class TaskController(
         val task = taskService.getTaskById(id) ?: return "redirect:/tasks"
 
         if (task.user.username != authentication.name) {
+            // AJOUT TP2 - log technique si un utilisateur tente de modifier une tâche qui ne lui appartient pas
+            logger.warn(
+                "Tentative de mise à jour non autorisée de la tâche {} par l'utilisateur {}",
+                id,
+                authentication.name
+            )
             return "redirect:/tasks"
         }
 
@@ -109,6 +115,15 @@ class TaskController(
             request = request
         )
 
+        // AJOUT TP2 - log technique lors de la mise à jour d’une tâche
+        logger.info(
+            "Mise à jour de la tâche {} par l'utilisateur {} : titre=\"{}\", statut= {}, échéance={}",
+                id,
+                authentication.name,
+                title,
+                status,
+                parsedDueDate
+        )
         return "redirect:/tasks"
     }
 
