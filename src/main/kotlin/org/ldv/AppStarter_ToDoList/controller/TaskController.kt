@@ -163,27 +163,51 @@ class TaskController(
     @PostMapping("/delete/{id}")
     fun deleteTask(
         @PathVariable id: Long,
+        @RequestParam title: String,
+        @RequestParam(required = false) description: String?,
+        @RequestParam status: String,
+        @RequestParam(required = false) dueDate: String?,
         authentication: Authentication,
         request: HttpServletRequest
     ): String {
         val task = taskService.getTaskById(id)
 
+        val parsedDueDate = dueDate?.takeIf { it.isNotBlank() }?.let {
+            LocalDateTime.parse(it, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+        }
+
         if (task != null && task.user.username == authentication.name) {
             taskService.deleteTask(id)
 
+
+
+            // TP1 - audit en base
             auditLogService.log(
                 username = authentication.name,
                 action = "DELETE_TASK",
-                details = "Suppression tâche #$id",
+                details = "Suppression tâche #$id (titre=$title, statut=$status)",
                 request = request
             )
 
-            // AJOUT TP2 - log technique lors de la suppression d’une tâche
-            logger.info(
-                "Suppression de la tâche {} par l'utilisateur {}",
+            // AJOUT TP2 - audit fichier
+            auditLogger.info(
+                "UPDATE_TASK user={} taskId={} title=\"{}\" status={} dueDate={}",
+                authentication.name,
                 id,
-                authentication.name
+                title,
+                status,
+                parsedDueDate
             )
+
+            // AJOUT TP2 - log technique
+            logger.info("Suppression de la tâche {} par {}", id, authentication.name)
+
+            // AJOUT TP2 - log technique lors de la suppression d’une tâche
+//            logger.info(
+//                "Suppression de la tâche {} par l'utilisateur {}",
+//                id,
+//                authentication.name
+//            )
         } else {
             // AJOUT TP2 - log technique en cas de tentative de suppression non autorisée
             logger.warn(
