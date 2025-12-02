@@ -62,7 +62,8 @@ class TaskController(
         @RequestParam(required = false) description: String?,
         @RequestParam status: String,
         @RequestParam(required = false) dueDate: String?,
-        authentication: Authentication
+        authentication: Authentication,
+        request: HttpServletRequest
     ): String {
         val task = taskService.getTaskById(id) ?: return "redirect:/tasks"
 
@@ -82,7 +83,12 @@ class TaskController(
             parsedDueDate
         )
 
-        // Journalisation à implémenter par les étudiants ici plus tard
+        auditLogService.log(
+            username = authentication.name,
+            action = "UPDATE_TASK",
+            details = "Modification tâche #$id (titre=$title, statut=$status)",
+            request = request
+        )
 
         return "redirect:/tasks"
     }
