@@ -75,13 +75,20 @@ class TaskController(
             parsedDueDate
         )
 
-        // AJOUT TP2 - log technique lors de la création d’une tâche
+        // AJOUT TP2 - log technique classique
         logger.info(
-            "Création d'une tâche pour l'utilisateur {} : titre=\"{}\", échéance={}",
+            "Création d'une tâche pour {} : {}",
             user.username,
-            title,
-            parsedDueDate
+            title
         )
+
+        // AJOUT TP2 - log technique lors de la création d’une tâche
+//        logger.info(
+//            "Création d'une tâche pour l'utilisateur {} : titre=\"{}\", échéance={}",
+//            user.username,
+//            title,
+//            parsedDueDate
+//        )
 
         return "redirect:/tasks"
     }
