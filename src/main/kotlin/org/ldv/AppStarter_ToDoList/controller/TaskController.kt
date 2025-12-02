@@ -96,14 +96,20 @@ class TaskController(
     @PostMapping("/delete/{id}")
     fun deleteTask(
         @PathVariable id: Long,
-        authentication: Authentication
+        authentication: Authentication,
+        request: HttpServletRequest
     ): String {
         val task = taskService.getTaskById(id)
 
         if (task != null && task.user.username == authentication.name) {
             taskService.deleteTask(id)
 
-            // Journalisation à implémenter par les étudiants ici plus tard
+            auditLogService.log(
+                username = authentication.name,
+                action = "DELETE_TASK",
+                details = "Suppression tâche #$id",
+                request = request
+            )
         }
 
         return "redirect:/tasks"
