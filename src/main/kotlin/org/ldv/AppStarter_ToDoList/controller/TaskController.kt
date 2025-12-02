@@ -1,6 +1,7 @@
 package org.ldv.AppStarter_ToDoList.controller
 
 import org.ldv.AppStarter_ToDoList.entity.TaskStatus
+import org.ldv.AppStarter_ToDoList.service.AuditLogService
 import org.ldv.AppStarter_ToDoList.service.TaskService
 import org.ldv.AppStarter_ToDoList.service.UserService
 import org.springframework.security.core.Authentication
@@ -14,7 +15,8 @@ import java.time.format.DateTimeFormatter
 @RequestMapping("/tasks")
 class TaskController(
     private val taskService: TaskService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val auditLogService: AuditLogService
 ) {
 
     @GetMapping
