@@ -135,15 +135,28 @@ class TaskController(
             request = request
         )
 
-        // AJOUT TP2 - log technique lors de la mise à jour d’une tâche
-        logger.info(
-            "Mise à jour de la tâche {} par l'utilisateur {} : titre=\"{}\", statut= {}, échéance={}",
-                id,
-                authentication.name,
-                title,
-                status,
-                parsedDueDate
+        // AJOUT TP2 - audit fichier
+        auditLogger.info(
+            "UPDATE_TASK user={} taskId={} title=\"{}\" status={} dueDate={}",
+            authentication.name,
+            id,
+            title,
+            status,
+            parsedDueDate
         )
+
+        // AJOUT TP2 - log technique
+        logger.info("Mise à jour de la tâche {} par {}", id, authentication.name)
+
+        // AJOUT TP2 - log technique lors de la mise à jour d’une tâche
+//        logger.info(
+//            "Mise à jour de la tâche {} par l'utilisateur {} : titre=\"{}\", statut= {}, échéance={}",
+//                id,
+//                authentication.name,
+//                title,
+//                status,
+//                parsedDueDate
+//        )
         return "redirect:/tasks"
     }
 
