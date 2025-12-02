@@ -163,14 +163,13 @@ class TaskController(
     @PostMapping("/delete/{id}")
     fun deleteTask(
         @PathVariable id: Long,
-        @RequestParam title: String,
-        @RequestParam(required = false) description: String?,
-        @RequestParam status: String,
-        @RequestParam(required = false) dueDate: String?,
         authentication: Authentication,
         request: HttpServletRequest
     ): String {
         val task = taskService.getTaskById(id)
+        val title = task?.title ?: "inconnu"
+        val status = task?.status ?: "inconnu"
+        val dueDate = task?.dueDate?.toString() ?: ""
 
         val parsedDueDate = dueDate?.takeIf { it.isNotBlank() }?.let {
             LocalDateTime.parse(it, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
@@ -178,7 +177,6 @@ class TaskController(
 
         if (task != null && task.user.username == authentication.name) {
             taskService.deleteTask(id)
-
 
 
             // TP1 - audit en base

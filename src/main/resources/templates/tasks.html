@@ -124,6 +124,7 @@
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="post" class="d-inline">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                     <button type="submit" class="btn btn-sm btn-outline-danger"
                                             onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')">
                                         <i class="bi bi-trash"></i>
