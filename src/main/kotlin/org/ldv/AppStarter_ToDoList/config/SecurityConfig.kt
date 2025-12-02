@@ -54,12 +54,12 @@ class SecurityConfig (
             .formLogin { form ->
                 form
                     .loginPage("/login")
-                    .defaultSuccessUrl("/tasks", true)  // Redirection standard
+                    .successHandler(customAuthenticationSuccessHandler())
                     .permitAll()
             }
             .logout { logout ->
                 logout
-                    .logoutSuccessUrl("/login?logout")
+                    .logoutSuccessHandler(customLogoutSuccessHandler())
                     .permitAll()
             }
             .csrf { csrf ->
