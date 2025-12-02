@@ -56,17 +56,29 @@ class SecurityConfig (
                     .requestMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             }
+//            .formLogin { form ->
+//                form
+//                    .loginPage("/login")
+//                    .successHandler(customAuthenticationSuccessHandler())
+//                    .permitAll()
+//            }
+//            .logout { logout ->
+//                logout
+//                    .logoutSuccessHandler(customLogoutSuccessHandler())
+//                    .permitAll()
+//            }
             .formLogin { form ->
                 form
                     .loginPage("/login")
+                    // AJOUT TP2 - branchement du handler de succès avec audit fichier
                     .successHandler(customAuthenticationSuccessHandler())
                     .permitAll()
             }
             .logout { logout ->
-                logout
-                    .logoutSuccessHandler(customLogoutSuccessHandler())
-                    .permitAll()
+                // AJOUT TP2 - branchement du handler de logout avec audit fichier
+                logout.logoutSuccessHandler(customLogoutSuccessHandler())
             }
+
             .csrf { csrf ->
                 csrf.ignoringRequestMatchers("/h2-console/**")
             }
