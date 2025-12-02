@@ -40,7 +40,7 @@ class TaskController(
             user.username)
         model.addAttribute("tasks", tasks)
         model.addAttribute("username", user.username)
-        return "task"
+        return "tasks"
     }
 
     @PostMapping("/create")
