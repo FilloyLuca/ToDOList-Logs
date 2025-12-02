@@ -144,6 +144,20 @@ class TaskController(
                 details = "Suppression tâche #$id",
                 request = request
             )
+
+            // AJOUT TP2 - log technique lors de la suppression d’une tâche
+            logger.info(
+                "Suppression de la tâche {} par l'utilisateur {}",
+                id,
+                authentication.name
+            )
+        } else {
+            // AJOUT TP2 - log technique en cas de tentative de suppression non autorisée
+            logger.warn(
+                "Tentative de suppression non autorisée de la tâche {} par l'utilisateur {}",
+                id,
+                authentication.name
+            )
         }
 
         return "redirect:/tasks"
