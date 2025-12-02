@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler
 
 
 @Configuration
@@ -69,4 +71,28 @@ class SecurityConfig (
 
         return http.build()
     }
+
+    private fun customAuthenticationSuccessHandler(): AuthenticationSuccessHandler =
+        AuthenticationSuccessHandler { request, response, authentication ->
+            val username = authentication.name
+            auditLogService.log(
+                username = username,
+                action = "LOGIN",
+                details = "Connexion réussie",
+                request = request
+            )
+            response.sendRedirect("/tasks")
+        }
+
+    private fun customLogoutSuccessHandler(): LogoutSuccessHandler =
+        LogoutSuccessHandler { request, response, authentication ->
+            val username = authentication?.name ?: "anonymous"
+            auditLogService.log(
+                username = username,
+                action = "LOGOUT",
+                details = "Déconnexion",
+                request = request
+            )
+            response.sendRedirect("/login?logout")
+        }
 }
