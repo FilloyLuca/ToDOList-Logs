@@ -20,9 +20,12 @@ class TaskController(
     private val taskService: TaskService,
     private val userService: UserService,
     private val auditLogService: AuditLogService
+
 ) {
     // AJOUT TP2 - logger technique pour cette classe
     private val logger = LoggerFactory.getLogger(TaskController::class.java)
+    // AJOUT TP2 - Logger d’audit dédié (redirigé vers audit.log)
+    private val auditLogger = LoggerFactory.getLogger("AUDIT")
 
     @GetMapping
     fun listTasks(authentication: Authentication, model: Model): String {
@@ -56,11 +59,20 @@ class TaskController(
 
         taskService.createTask(title, description, parsedDueDate, user)
 
+        // TP1 - journalisation en base
         auditLogService.log(
             username = user.username,
             action = "CREATE_TASK",
             details = "Création de la tâche : $title",
             request = request
+        )
+
+        // AJOUT TP2 - journalisation fichier : audit.log
+        auditLogger.info(
+            "CREATE_TASK user={} title=\"{}\" dueDate={}",
+            user.username,
+            title,
+            parsedDueDate
         )
 
         // AJOUT TP2 - log technique lors de la création d’une tâche
@@ -108,6 +120,7 @@ class TaskController(
             parsedDueDate
         )
 
+        // TP1 - journalisation en base
         auditLogService.log(
             username = authentication.name,
             action = "UPDATE_TASK",
