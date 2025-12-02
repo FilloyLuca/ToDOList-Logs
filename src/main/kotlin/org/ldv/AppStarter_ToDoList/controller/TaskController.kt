@@ -1,5 +1,6 @@
 package org.ldv.AppStarter_ToDoList.controller
 
+import jakarta.servlet.http.HttpServletRequest
 import org.ldv.AppStarter_ToDoList.entity.TaskStatus
 import org.ldv.AppStarter_ToDoList.service.AuditLogService
 import org.ldv.AppStarter_ToDoList.service.TaskService
@@ -33,7 +34,8 @@ class TaskController(
         @RequestParam title: String,
         @RequestParam(required = false) description: String?,
         @RequestParam(required = false) dueDate: String?,
-        authentication: Authentication
+        authentication: Authentication,
+        request: HttpServletRequest
     ): String {
         val user = userService.findByUsername(authentication.name)!!
 
@@ -43,8 +45,12 @@ class TaskController(
 
         taskService.createTask(title, description, parsedDueDate, user)
 
-        // Journalisation à implémenter par les étudiants ici plus tard
-        // (appel à un futur AuditLogService)
+        auditLogService.log(
+            username = user.username,
+            action = "CREATE_TASK",
+            details = "Création de la tâche : $title",
+            request = request
+        )
 
         return "redirect:/tasks"
     }
