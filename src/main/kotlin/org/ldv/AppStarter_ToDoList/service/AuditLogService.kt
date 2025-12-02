@@ -19,7 +19,8 @@ class AuditLogService(
             details = details,
             ipAddress = ip
         )
-        auditLogRepository.save(logEntry)
+       var log= auditLogRepository.save(logEntry)
+        println(log.details)
     }
     fun getAllLogs(): List<AuditLog> =
         auditLogRepository.findAllByOrderByTimestampDesc()

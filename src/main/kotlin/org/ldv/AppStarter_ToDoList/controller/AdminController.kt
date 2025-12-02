@@ -15,7 +15,7 @@ class AdminController(
     @GetMapping
     fun adminPanel(model: Model): String {
         val logs = auditLogService.getAllLogs()
-        model.addAttribute("logs", emptyList<Any>())
+        model.addAttribute("logs", logs)
         return "admin"
     }
 }
